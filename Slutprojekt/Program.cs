@@ -1,12 +1,8 @@
 ﻿using System;
 
-namespace Slutprojekt
+bool tutorial = true;
+
+if (tutorial == true)
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello World!");
-        }
-    }
+    Tutorial.StartTutorial();
 }
