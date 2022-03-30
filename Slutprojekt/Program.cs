@@ -1,8 +1,14 @@
 ﻿using System;
 
-bool tutorial = true;
+bool startTutorial = false;
+bool startGame = true;
 
-if (tutorial == true)
+if (startTutorial == true)
 {
     Tutorial.StartTutorial();
+}
+
+if(startGame == true)
+{
+    Game.PlayGame();
 }
