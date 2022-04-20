@@ -12,24 +12,32 @@ public class Game
 
         Grid grid = new Grid();
         Blocks blocks = new Blocks();
+        Preview preview = new Preview();
+
+        (Rectangle[,] nextBlock, Color nextBlockColour) = blocks.chooseBlock();
+
+        playArea = grid.CreateGrid();
 
         bool isOnFloor = true;
 
         while (!Raylib.WindowShouldClose())
         {
             if(isOnFloor)
-            {
-                (Rectangle[] nextBlock, int blockChoice) = blocks.chooseBlock();
-                nextBlock = blocks.MoveBlockToPlayArea(nextBlock, blockChoice);
+            {   
+                
+
+                (nextBlock, nextBlockColour) = blocks.chooseBlock();
+
+
+                isOnFloor = false;
             }
 
             Raylib.BeginDrawing();
 
             Raylib.ClearBackground(Color.BLUE);
 
-            playArea = grid.CreateGrid();
-
             grid.Draw(playArea);
+            preview.Draw(nextBlock, nextBlockColour);
 
             Raylib.EndDrawing();
         }
