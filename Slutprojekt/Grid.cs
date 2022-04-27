@@ -1,5 +1,6 @@
 using System;
 using Raylib_cs;
+using System.Collections.Generic;
 
 public class Grid
 {
@@ -24,7 +25,7 @@ public class Grid
         return grid;
     }
 
-    public void Draw(Rectangle[,] gridArray)
+    public void Draw(Rectangle[,] gridArray, Blocks currentBlock, Texture2D blockTexture)
     {
         // Draws out the rectangles and outlines for them so that you can differentiate between them
         foreach (Rectangle box in gridArray)
@@ -35,5 +36,14 @@ public class Grid
 
         // Outline for the outer part of the play area
         Raylib.DrawRectangleRoundedLines(new Rectangle(100, 30, 300, 600), 0, 1, 0.5f, Color.WHITE);
+
+        // Draws the current block inside the grid
+        foreach(Rectangle tile in currentBlock.position)
+        {
+            if(tile.width > 0)
+            {
+            Raylib.DrawTexture(blockTexture, (int) tile.x, (int) tile.y, currentBlock.colour);
+            }
+        }
     }
 }

@@ -1,29 +1,28 @@
 using System;
 using Raylib_cs;
+using System.Numerics;
 
 public class Blocks
 {
+    public Color colour = new Color(0, 0, 0, 0);
+    public Rectangle[,] position = new Rectangle[4, 4];
 
-    public (Rectangle[,], Color) chooseBlock()
+    public Blocks()
     {
         Random generator = new Random();
-        Color colour = new Color(0, 0, 0, 0);
-
-        // Makes an array due to the pieces always consisting of 4 blocks
-        Rectangle[,] upcomingBlock = new Rectangle[4, 4];
-
         int blockChoice = generator.Next(1, 8);
 
         int posX = 490;
         int posY = 50;
 
+        // Chooses the positions of the different blocks depending on what the random generator chooses
         switch (blockChoice)
         {
             //  Light Blue Block
             case (1):
-                for (int x = 0; x < upcomingBlock.GetLength(0); x++)
+                for (int x = 0; x < position.GetLength(0); x++)
                 {
-                    upcomingBlock[0, x] = new Rectangle(posX, posY, 30, 30);
+                    position[0, x] = new Rectangle(posX, posY, 30, 30);
                     posX += 30;
                 }
                 colour = new Color(0, 245, 241, 255);
@@ -33,25 +32,25 @@ public class Blocks
             case (2):
                 for (int x = 0; x < 3; x++)
                 {
-                    upcomingBlock[0, x] = new Rectangle(posX, posY, 30, 30);
+                    position[0, x] = new Rectangle(posX, posY, 30, 30);
                     posX += 30;
                 }
                 posX = 520;
                 posY = 80;
 
-                upcomingBlock[1, 1] = new Rectangle(posX, posY, 30, 30);
+                position[1, 1] = new Rectangle(posX, posY, 30, 30);
 
                 colour = new Color(158, 1, 240, 255);
                 break;
 
             //  Blue Block
             case (3):
-                upcomingBlock[0, 0] = new Rectangle(posX, posY, 30, 30);
+                position[0, 0] = new Rectangle(posX, posY, 30, 30);
                 posY += 30;
 
                 for (int x = 0; x < 3; x++)
                 {
-                    upcomingBlock[1, x] = new Rectangle(posX, posY, 30, 30);
+                    position[1, x] = new Rectangle(posX, posY, 30, 30);
                     posX += 30;
                 }
 
@@ -60,13 +59,17 @@ public class Blocks
 
             //  Orange Block
             case (4):
+                posY += 30;
+
                 for (int x = 0; x < 3; x++)
                 {
-                    upcomingBlock[1, x] = new Rectangle(posX, posY, 30, 30);
+                    position[1, x] = new Rectangle(posX, posY, 30, 30);
                     posX += 30;
                 }
+                posY -= 30;
+                posX -= 30;
 
-                upcomingBlock[0, 3] = new Rectangle(posX, posY, 30, 30);
+                position[0, 3] = new Rectangle(posX, posY, 30, 30);
 
                 colour = new Color(243, 161, 0, 255);
                 break;
@@ -77,7 +80,7 @@ public class Blocks
                 {
                     for (int x = 0; x < 2; x++)
                     {
-                        upcomingBlock[y, x] = new Rectangle(posX, posY, 30, 30);
+                        position[y, x] = new Rectangle(posX, posY, 30, 30);
 
                         posX += 30;
                     }
@@ -97,7 +100,7 @@ public class Blocks
                 {
                     for (int x = 0; x < 2; x++)
                     {
-                        upcomingBlock[y, x] = new Rectangle(posX, posY, 30, 30);
+                        position[y, x] = new Rectangle(posX, posY, 30, 30);
 
                         posX += 30;
                     }
@@ -115,7 +118,7 @@ public class Blocks
                 {
                     for (int x = 0; x < 2; x++)
                     {
-                        upcomingBlock[y, x] = new Rectangle(posX, posY, 30, 30);
+                        position[y, x] = new Rectangle(posX, posY, 30, 30);
 
                         posX += 30;
                     }
@@ -127,24 +130,23 @@ public class Blocks
                 colour = new Color(244, 0, 0, 255);
                 break;
         }
-
-        return (upcomingBlock, colour);
     }
 
 
 
-    public Rectangle[,] MoveBlockToPlayArea(Rectangle[,] block)
+    public Blocks MoveBlockToPlayArea(Blocks block)
     {
-        for (int y = 0; y < block.GetLength(1); y++)
+        //  Moves blocks from the preview window to the play area
+        for (int y = 0; y < block.position.GetLength(1); y++)
         {
-            for (int x = 0; x < block.GetLength(0); x++)
+            for (int x = 0; x < block.position.GetLength(0); x++)
             {
-                Rectangle temp = block[x, y];
+                Rectangle temp = block.position[x, y];
 
-                temp.x -= 100;
+                temp.x -= 300;
                 temp.y -= 20;
 
-                block[x, y] = temp;
+                block.position[x, y] = temp;
             }
         }
 
