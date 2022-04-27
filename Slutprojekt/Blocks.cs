@@ -4,7 +4,7 @@ using System.Numerics;
 
 public class Blocks
 {
-    public Color colour = new Color(0, 0, 0, 0);
+    public Color colour;
     public Rectangle[,] position = new Rectangle[4, 4];
 
     public Blocks()

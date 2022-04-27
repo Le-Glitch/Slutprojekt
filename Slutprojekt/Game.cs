@@ -42,7 +42,6 @@ public class Game
 
                 isOnFloor = false;
             }
-
         }
     }
 }
