@@ -7,6 +7,9 @@ public class Blocks
     public Color colour;
     public Rectangle[,] position = new Rectangle[4, 4];
 
+    int time = 0;
+    int timePerDrop = 60;
+
     public Blocks()
     {
         Random generator = new Random();
@@ -133,23 +136,40 @@ public class Blocks
     }
 
 
-
-    public Blocks MoveBlockToPlayArea(Blocks block)
+    public void MoveBlockToPlayArea()
     {
         //  Moves blocks from the preview window to the play area
-        for (int y = 0; y < block.position.GetLength(1); y++)
+        for (int y = 0; y < position.GetLength(1); y++)
         {
-            for (int x = 0; x < block.position.GetLength(0); x++)
+            for (int x = 0; x < position.GetLength(0); x++)
             {
-                Rectangle temp = block.position[x, y];
+                Rectangle temp = position[x, y];
 
                 temp.x -= 300;
                 temp.y -= 20;
 
-                block.position[x, y] = temp;
+                position[x, y] = temp;
             }
         }
+    }
 
-        return block;
+    public void AutoMovement()
+    {
+        if(time >= timePerDrop)
+        {
+            for (int y = 0; y < position.GetLength(1); y++)
+            {
+                for (int x = 0; x < position.GetLength(0); x++)
+                {
+                    Rectangle tempRect = position[x, y];
+
+                    tempRect.y += 30;
+
+                    position[x, y] = tempRect;
+                }
+            }
+            time = 0;
+        }
+        time++;
     }
 }

@@ -9,7 +9,7 @@ public class Game
         General.WindowSettings();
 
         Grid grid = new Grid();
-        Blocks blockFunctions = new Blocks();
+        
         Preview preview = new Preview();
 
         List<Blocks> blocks = new List<Blocks>();
@@ -26,6 +26,8 @@ public class Game
 
         while (!Raylib.WindowShouldClose())
         {
+            currentBlock.AutoMovement();
+
             Raylib.BeginDrawing();
 
             Raylib.ClearBackground(Color.BLUE);
@@ -38,7 +40,7 @@ public class Game
             if(isOnFloor)
             {
                 blocks.Add(currentBlock);
-                currentBlock = blockFunctions.MoveBlockToPlayArea(currentBlock);
+                currentBlock.MoveBlockToPlayArea();
 
                 isOnFloor = false;
             }
