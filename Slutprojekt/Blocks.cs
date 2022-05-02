@@ -6,6 +6,7 @@ public class Blocks
 {
     public Color colour;
     public Rectangle[,] position = new Rectangle[4, 4];
+    public int blockID;
 
     int time = 0;
     int timePerDrop = 60;
@@ -13,13 +14,13 @@ public class Blocks
     public Blocks()
     {
         Random generator = new Random();
-        int blockChoice = generator.Next(1, 8);
+        blockID = generator.Next(1, 8);
 
         int posX = 490;
         int posY = 50;
 
         // Chooses the positions of the different blocks depending on what the random generator chooses
-        switch (blockChoice)
+        switch (blockID)
         {
             //  Light Blue Block
             case (1):
@@ -155,6 +156,8 @@ public class Blocks
 
     public void AutoMovement()
     {
+        timePerDrop = 60;
+        // Delays the time between each drop so it doesn't go too fast in the beginning
         if (time >= timePerDrop)
         {
             for (int y = 0; y < position.GetLength(1); y++)
@@ -173,9 +176,99 @@ public class Blocks
         time++;
     }
 
+    public void HorizontalMovement()
+    {
+        // Moves the block to the left
+        if(Raylib.IsKeyPressed(KeyboardKey.KEY_LEFT))
+        {
+            for (int y = 0; y < position.GetLength(1); y++)
+            {
+                for (int x = 0; x < position.GetLength(0); x++)
+                {
+                    Rectangle tempRect = position[x, y];
+
+                    tempRect.x -= 30;
+
+                    position[x, y] = tempRect;
+
+
+                }
+            }
+        }
+
+        // Moves the block to the right
+        if(Raylib.IsKeyPressed(KeyboardKey.KEY_RIGHT))
+        {
+            for (int y = 0; y < position.GetLength(1); y++)
+            {
+                for (int x = 0; x < position.GetLength(0); x++)
+                {
+                    Rectangle tempRect = position[x, y];
+
+                    tempRect.x += 30;
+
+                    position[x, y] = tempRect;
+
+
+                }
+            }
+        }
+    }
+
+    public void IsInPlayArea()
+    {
+        // Here the code first excludes any parts of the array that aren't part of the block
+        // Then it checks whether any block is outside of the play area to either the right or left
+        // Finally if there is then it moves back the entire block by one tile length
+        for (int y = 0; y < position.GetLength(1); y++)
+        {
+            for (int x = 0; x < position.GetLength(0); x++)
+            {
+                if(position[x, y].width > 0)
+                {
+                    if(position[x, y].x < 100)
+                    {
+                        for (int yy = 0; yy < position.GetLength(1); yy++)
+                        {
+                            for (int xx = 0; xx < position.GetLength(0); xx++)
+                            {
+                                if(position[xx, yy].width > 0)
+                                {
+                                Rectangle tempRect = position[xx, yy];
+
+                                tempRect.x += 30;
+
+                                position[xx, yy] = tempRect;
+                                }
+                            }
+                        }
+                    }
+
+                    if(position[x, y].x > 370)
+                    {
+                        for (int yy = 0; yy < position.GetLength(1); yy++)
+                        {
+                            for (int xx = 0; xx < position.GetLength(0); xx++)
+                            {
+                                if(position[xx, yy].width > 0)
+                                {
+                                Rectangle tempRect = position[xx, yy];
+
+                                tempRect.x -= 30;
+
+                                position[xx, yy] = tempRect;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public bool HasReachedFloor(Rectangle[,] gridArray)
     {
-
+        // Checks if the block has reached the floor and returns that information
         for (int x = 0; x < gridArray.GetLength(0); x++)
         {
             foreach (Rectangle tile in position)
@@ -188,6 +281,104 @@ public class Blocks
         }
 
         return false;
+    }
+
+    public void BlockCollisions(Rectangle[,] placedBlocks)
+    {
+        for (int x = 0; x < placedBlocks.GetLength(0); x++)
+        {
+            foreach (Rectangle tile in position)
+            {
+                if (Raylib.CheckCollisionRecs(tile, placedBlocks[x, 19]))
+                {
+                    Console.WriteLine("yeet");
+                }
+            }
+        }
+    }
+
+    public void BlockRotation()
+    {
+        switch(blockID)
+        {
+            case(1):
+
+            break;
+            
+            case(2):
+
+            break;
+
+            case(3):
+
+            break;
+
+            case(4):
+
+            break;
+
+            case(5):
+
+            break;
+
+            case(6):
+
+            break;
+
+            case(7):
+
+            break;
+        }
+    }
+
+    public void SoftDrop(Rectangle[,] gridArray)
+    {
+        if(Raylib.IsKeyDown(KeyboardKey.KEY_DOWN))
+        {
+            timePerDrop = 3;
+            if (time >= timePerDrop)
+        {
+            for (int y = 0; y < position.GetLength(1); y++)
+            {
+                for (int x = 0; x < position.GetLength(0); x++)
+                {
+                    Rectangle tempRect = position[x, y];
+
+                    tempRect.y += 30;
+
+                    position[x, y] = tempRect;
+                }
+            }
+            time = 0;
+        }
+        time++;
+        }
+    }
+
+    public bool HardDrop(Rectangle[,] gridArray)
+    {
+        bool isOnFloor = false;
+        if(Raylib.IsKeyPressed(KeyboardKey.KEY_SPACE))
+        {
+            while(!isOnFloor)
+            {
+                for (int y = 0; y < position.GetLength(1); y++)
+                {
+                    for (int x = 0; x < position.GetLength(0); x++)
+                    {
+                        Rectangle tempRect = position[x, y];
+
+                        tempRect.y += 30;
+
+                        position[x, y] = tempRect;
+                    }
+                }
+
+                isOnFloor = HasReachedFloor(gridArray);
+            }
+            return isOnFloor;
+        }
+        return isOnFloor;
     }
 
     public void Draw(Texture2D blockTexture)

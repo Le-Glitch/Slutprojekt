@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="raylib" Version="4.0.0.6" />
     <PackageReference Include="Raylib-cs" Version="4.0.0.1" />
   </ItemGroup>
 
