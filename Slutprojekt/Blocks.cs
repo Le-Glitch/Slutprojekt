@@ -155,7 +155,7 @@ public class Blocks
 
     public void AutoMovement()
     {
-        if(time >= timePerDrop)
+        if (time >= timePerDrop)
         {
             for (int y = 0; y < position.GetLength(1); y++)
             {
@@ -171,5 +171,34 @@ public class Blocks
             time = 0;
         }
         time++;
+    }
+
+    public bool HasReachedFloor(Rectangle[,] gridArray)
+    {
+
+        for (int x = 0; x < gridArray.GetLength(0); x++)
+        {
+            foreach (Rectangle tile in position)
+            {
+                if (Raylib.CheckCollisionRecs(tile, gridArray[x, 19]))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public void Draw(Texture2D blockTexture)
+    {
+        // Draws the current block inside the grid
+        foreach (Rectangle tile in position)
+        {
+            if (tile.width > 0)
+            {
+                Raylib.DrawTexture(blockTexture, (int)tile.x, (int)tile.y, colour);
+            }
+        }
     }
 }

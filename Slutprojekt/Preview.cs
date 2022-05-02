@@ -5,8 +5,6 @@ public class Preview
 {
     public void Draw(Blocks block, Texture2D blockTexture)
     {
-        
-
         Raylib.DrawRectangle(450, 30, 200, 100, Color.BLACK);
         Raylib.DrawRectangleLines(450, 30, 200, 100, Color.WHITE);
 
