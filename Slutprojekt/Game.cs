@@ -6,7 +6,9 @@ public class Game
 {
     public static void PlayGame()
     {
-        General.WindowSettings();
+        Raylib.InitWindow(750, 750, "Tetris");
+        Raylib.SetTargetFPS(60);
+        Raylib.SetExitKey(0);
 
         Grid grid = new Grid();
 
@@ -55,11 +57,15 @@ public class Game
             // Allows for movement of the current falling block
             currentBlock.HorizontalMovement();
 
+            currentBlock.BlockRotation();
+
             // Checks that the block is still in the grid
             currentBlock.IsInPlayArea();
 
+            // Accelerates the dropping of a block
             currentBlock.SoftDrop(playArea);
 
+            // Drops a block as far as possible instantly
             isOnFloor = currentBlock.HardDrop(playArea);
 
             // Makes the block fall

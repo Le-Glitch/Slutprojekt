@@ -7,6 +7,7 @@ public class Blocks
     public Color colour;
     public Rectangle[,] position = new Rectangle[4, 4];
     public int blockID;
+    public int rotation = 0;
 
     int time = 0;
     int timePerDrop = 60;
@@ -14,7 +15,7 @@ public class Blocks
     public Blocks()
     {
         Random generator = new Random();
-        blockID = generator.Next(1, 8);
+        blockID = 7;//generator.Next(1, 8);
 
         int posX = 490;
         int posY = 50;
@@ -179,7 +180,7 @@ public class Blocks
     public void HorizontalMovement()
     {
         // Moves the block to the left
-        if(Raylib.IsKeyPressed(KeyboardKey.KEY_LEFT))
+        if (Raylib.IsKeyPressed(KeyboardKey.KEY_LEFT))
         {
             for (int y = 0; y < position.GetLength(1); y++)
             {
@@ -197,7 +198,7 @@ public class Blocks
         }
 
         // Moves the block to the right
-        if(Raylib.IsKeyPressed(KeyboardKey.KEY_RIGHT))
+        if (Raylib.IsKeyPressed(KeyboardKey.KEY_RIGHT))
         {
             for (int y = 0; y < position.GetLength(1); y++)
             {
@@ -224,39 +225,39 @@ public class Blocks
         {
             for (int x = 0; x < position.GetLength(0); x++)
             {
-                if(position[x, y].width > 0)
+                if (position[x, y].width > 0)
                 {
-                    if(position[x, y].x < 100)
+                    if (position[x, y].x < 100)
                     {
                         for (int yy = 0; yy < position.GetLength(1); yy++)
                         {
                             for (int xx = 0; xx < position.GetLength(0); xx++)
                             {
-                                if(position[xx, yy].width > 0)
+                                if (position[xx, yy].width > 0)
                                 {
-                                Rectangle tempRect = position[xx, yy];
+                                    Rectangle tempRect = position[xx, yy];
 
-                                tempRect.x += 30;
+                                    tempRect.x += 30;
 
-                                position[xx, yy] = tempRect;
+                                    position[xx, yy] = tempRect;
                                 }
                             }
                         }
                     }
 
-                    if(position[x, y].x > 370)
+                    if (position[x, y].x > 370)
                     {
                         for (int yy = 0; yy < position.GetLength(1); yy++)
                         {
                             for (int xx = 0; xx < position.GetLength(0); xx++)
                             {
-                                if(position[xx, yy].width > 0)
+                                if (position[xx, yy].width > 0)
                                 {
-                                Rectangle tempRect = position[xx, yy];
+                                    Rectangle tempRect = position[xx, yy];
 
-                                tempRect.x -= 30;
+                                    tempRect.x -= 30;
 
-                                position[xx, yy] = tempRect;
+                                    position[xx, yy] = tempRect;
                                 }
                             }
                         }
@@ -299,68 +300,73 @@ public class Blocks
 
     public void BlockRotation()
     {
-        switch(blockID)
+        if (Raylib.IsKeyPressed(KeyboardKey.KEY_UP))
         {
-            case(1):
+            switch (blockID)
+            {
+                case (1):
+                    rotation = Rotation.LightBlueRotate(position, rotation);
 
-            break;
-            
-            case(2):
+                    break;
 
-            break;
+                case (2):
+                    rotation = Rotation.PurpleRotate(position, rotation);
 
-            case(3):
+                    break;
 
-            break;
+                case (3):
+                    rotation = Rotation.BlueRotate(position, rotation);
 
-            case(4):
+                    break;
 
-            break;
+                case (4):
+                    rotation = Rotation.OrangeRotate(position, rotation);
 
-            case(5):
+                    break;
 
-            break;
+                case (6):
+                    rotation = Rotation.GreenRotate(position, rotation);
 
-            case(6):
+                    break;
 
-            break;
+                case (7):
+                    rotation = Rotation.RedRotate(position, rotation);
 
-            case(7):
-
-            break;
+                    break;
+            }
         }
     }
 
     public void SoftDrop(Rectangle[,] gridArray)
     {
-        if(Raylib.IsKeyDown(KeyboardKey.KEY_DOWN))
+        if (Raylib.IsKeyDown(KeyboardKey.KEY_DOWN))
         {
             timePerDrop = 3;
             if (time >= timePerDrop)
-        {
-            for (int y = 0; y < position.GetLength(1); y++)
             {
-                for (int x = 0; x < position.GetLength(0); x++)
+                for (int y = 0; y < position.GetLength(1); y++)
                 {
-                    Rectangle tempRect = position[x, y];
+                    for (int x = 0; x < position.GetLength(0); x++)
+                    {
+                        Rectangle tempRect = position[x, y];
 
-                    tempRect.y += 30;
+                        tempRect.y += 30;
 
-                    position[x, y] = tempRect;
+                        position[x, y] = tempRect;
+                    }
                 }
+                time = 0;
             }
-            time = 0;
-        }
-        time++;
+            time++;
         }
     }
 
     public bool HardDrop(Rectangle[,] gridArray)
     {
         bool isOnFloor = false;
-        if(Raylib.IsKeyPressed(KeyboardKey.KEY_SPACE))
+        if (Raylib.IsKeyPressed(KeyboardKey.KEY_SPACE))
         {
-            while(!isOnFloor)
+            while (!isOnFloor)
             {
                 for (int y = 0; y < position.GetLength(1); y++)
                 {
