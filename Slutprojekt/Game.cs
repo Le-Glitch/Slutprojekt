@@ -13,7 +13,7 @@ public class Game
         Grid grid = new Grid();
 
         Preview preview = new Preview();
-        
+
         List<Blocks> blocks = new List<Blocks>();
         blocks.Clear();
         Blocks currentBlock = new Blocks();
@@ -25,13 +25,14 @@ public class Game
         // Loads in the texture for a single tile of a block
         Texture2D blockTexture = Raylib.LoadTexture("tetrisBlock.png");
 
-        bool isOnFloor = true;
+        bool hasLandedOnFloor = true;
+        bool hasLandedOnBlock = true;
         bool startup = true;
 
         while (!Raylib.WindowShouldClose())
         {
             // Checks if the current block is on the ground or not
-            if (isOnFloor)
+            if (hasLandedOnFloor || hasLandedOnBlock)
             {
                 // Checks that this isn't the first run through of the code
                 if (!startup)
@@ -45,31 +46,28 @@ public class Game
                     // Generates a new block in the preview window which will then be used as the next block
                     previewBlock = new Blocks();
                 }
-                
+
                 // Moves the next chosen block to the playing grid
                 currentBlock.MoveBlockToPlayArea();
 
 
                 startup = false;
-                isOnFloor = false;
+                hasLandedOnFloor = false;
+                hasLandedOnBlock = false;
             }
-            
-            // Allows for movement of the current falling block
-            currentBlock.HorizontalMovement();
+
+            currentBlock.AutoMovement();
+
+            currentBlock.HorizontalMovement(blocks);
 
             currentBlock.BlockRotation();
 
-            // Checks that the block is still in the grid
             currentBlock.IsInPlayArea();
 
-            // Accelerates the dropping of a block
             currentBlock.SoftDrop(playArea);
 
-            // Drops a block as far as possible instantly
-            isOnFloor = currentBlock.HardDrop(playArea);
+            (hasLandedOnFloor, hasLandedOnBlock) = currentBlock.HardDrop(playArea, blocks);
 
-            // Makes the block fall
-            currentBlock.AutoMovement();
 
             Raylib.BeginDrawing();
 
@@ -88,7 +86,9 @@ public class Game
 
             // Sets a bool depending on whether or not the current block has reached the floor
             // If it has then you will lose control of that block and the next one will start falling
-            isOnFloor = currentBlock.HasReachedFloor(playArea);
+            hasLandedOnFloor = currentBlock.HasReachedFloor(playArea);
+
+            hasLandedOnBlock = currentBlock.VerticleBlockCollision(blocks);
         }
     }
 }

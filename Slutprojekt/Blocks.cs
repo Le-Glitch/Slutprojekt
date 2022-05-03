@@ -1,6 +1,7 @@
 using System;
 using Raylib_cs;
 using System.Numerics;
+using System.Collections.Generic;
 
 public class Blocks
 {
@@ -15,7 +16,7 @@ public class Blocks
     public Blocks()
     {
         Random generator = new Random();
-        blockID = 7;//generator.Next(1, 8);
+        blockID = generator.Next(1, 8);
 
         int posX = 490;
         int posY = 50;
@@ -177,7 +178,42 @@ public class Blocks
         time++;
     }
 
-    public void HorizontalMovement()
+    // Checks if the current block collides with any block while falling and makes it go back above and returns that the block has landed
+    public bool VerticleBlockCollision(List<Blocks> placedBlocks)
+    {
+        bool hasLanded = false;
+        for (int y = 0; y < position.GetLength(1); y++)
+        {
+            for (int x = 0; x < position.GetLength(0); x++)
+            {
+                foreach (Blocks block in placedBlocks)
+                {
+                    foreach (Rectangle tile in block.position)
+                    {
+                        if (Raylib.CheckCollisionRecs(position[x, y], tile))
+                        {
+                            for (int yy = 0; yy < position.GetLength(1); yy++)
+                            {
+                                for (int xx = 0; xx < position.GetLength(0); xx++)
+                                {
+                                    Rectangle tempRect = position[xx, yy];
+
+                                    tempRect.y -= 30;
+
+                                    position[xx, yy] = tempRect;
+                                }
+                            }
+                            hasLanded = true;
+                            return hasLanded;
+                        }
+                    }
+                }
+            }
+        }
+        return hasLanded;
+    }
+
+    public void HorizontalMovement(List<Blocks> blocks)
     {
         // Moves the block to the left
         if (Raylib.IsKeyPressed(KeyboardKey.KEY_LEFT))
@@ -192,7 +228,7 @@ public class Blocks
 
                     position[x, y] = tempRect;
 
-
+                    HorizontalCollision(blocks, "Left");
                 }
             }
         }
@@ -210,7 +246,45 @@ public class Blocks
 
                     position[x, y] = tempRect;
 
+                    HorizontalCollision(blocks, "Right");
+                }
+            }
+        }
+    }
 
+    // Checks whether the block is inside of another block after it has moved and gets moved the opposite direction of which it was going
+    public void HorizontalCollision(List<Blocks> blocks, string direction)
+    {
+        for (int y = 0; y < position.GetLength(1); y++)
+        {
+            for (int x = 0; x < position.GetLength(0); x++)
+            {
+                foreach (Blocks block in blocks)
+                {
+                    foreach (Rectangle tile in block.position)
+                    {
+                        if (Raylib.CheckCollisionRecs(position[x, y], tile))
+                        {
+                            for (int yy = 0; yy < position.GetLength(1); yy++)
+                            {
+                                for (int xx = 0; xx < position.GetLength(0); xx++)
+                                {
+                                    Rectangle tempRect = position[xx, yy];
+
+                                    if (direction == "Right")
+                                    {
+                                        tempRect.x -= 30;
+                                    }
+                                    if (direction == "Left")
+                                    {
+                                        tempRect.x += 30;
+                                    }
+
+                                    position[xx, yy] = tempRect;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -267,9 +341,9 @@ public class Blocks
         }
     }
 
+    // Checks if the block has reached the floor and returns that information
     public bool HasReachedFloor(Rectangle[,] gridArray)
     {
-        // Checks if the block has reached the floor and returns that information
         for (int x = 0; x < gridArray.GetLength(0); x++)
         {
             foreach (Rectangle tile in position)
@@ -284,6 +358,7 @@ public class Blocks
         return false;
     }
 
+    // Checks collisions between the falling block and already placed blocks
     public void BlockCollisions(Rectangle[,] placedBlocks)
     {
         for (int x = 0; x < placedBlocks.GetLength(0); x++)
@@ -298,6 +373,7 @@ public class Blocks
         }
     }
 
+    // Rotates the current block by 90 degrees
     public void BlockRotation()
     {
         if (Raylib.IsKeyPressed(KeyboardKey.KEY_UP))
@@ -337,6 +413,7 @@ public class Blocks
         }
     }
 
+    // Accelerates the speed at which the current block falls
     public void SoftDrop(Rectangle[,] gridArray)
     {
         if (Raylib.IsKeyDown(KeyboardKey.KEY_DOWN))
@@ -361,12 +438,15 @@ public class Blocks
         }
     }
 
-    public bool HardDrop(Rectangle[,] gridArray)
+    // Instantly makes the current block fall as far as possible
+    // Returns two values because checking between block collision and floor collision is done seperately
+    public (bool, bool) HardDrop(Rectangle[,] gridArray, List<Blocks> blocks)
     {
-        bool isOnFloor = false;
+        bool hasLandedOnFloor = false;
+        bool hasLandedOnBlock = false;
         if (Raylib.IsKeyPressed(KeyboardKey.KEY_SPACE))
         {
-            while (!isOnFloor)
+            while (!hasLandedOnFloor && !hasLandedOnBlock)
             {
                 for (int y = 0; y < position.GetLength(1); y++)
                 {
@@ -380,11 +460,12 @@ public class Blocks
                     }
                 }
 
-                isOnFloor = HasReachedFloor(gridArray);
+                hasLandedOnBlock = VerticleBlockCollision(blocks);
+                hasLandedOnFloor = HasReachedFloor(gridArray);
             }
-            return isOnFloor;
+            return (hasLandedOnFloor, hasLandedOnBlock);
         }
-        return isOnFloor;
+        return (hasLandedOnFloor, hasLandedOnBlock);
     }
 
     public void Draw(Texture2D blockTexture)

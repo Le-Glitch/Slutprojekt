@@ -36,7 +36,5 @@ public class Grid
 
         // Outline for the outer part of the play area
         Raylib.DrawRectangleRoundedLines(new Rectangle(100, 30, 300, 600), 0, 1, 0.5f, Color.WHITE);
-
-        
     }
 }
